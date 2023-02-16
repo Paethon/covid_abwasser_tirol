@@ -1,0 +1,25 @@
+[project]
+name = "covid_abwasser_tirol"
+description = ""
+version = "0.1.0"
+license.text = "MIT"
+authors = [
+    { name = "Sebastian Stabinger"}
+]
+dependencies = [
+    "Mastodon.py~=1.8",
+    "shot-scraper==1.1.1",
+    "Pillow==9.4.0",
+    "numpy==1.24.2",
+    "black",
+    "pytest",
+]
+
+[tool.black]
+line-length = 120
+
+[tool.pytest.ini_options]
+testpaths="tests"
+
+[tool.setuptools]
+py-modules = ["covid_abwasser_tirol"]
