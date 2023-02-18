@@ -49,8 +49,14 @@ if __name__ == "__main__":
     previous_screenshot = Image.open(os.path.join(screenshot_path, "previous_screenshot.png"))
     # Get screenshot of the current graph
     img = get_shot()
-    # Compare the two screenshots
-    diff = utils.calc_pixel_difference(previous_screenshot, img)
+    # Get the bottom 20 pixels of both screenshots. This is where the date is displayed and we only want to compare the date
+    # Sometimes the graph is updated slightly without the date changing and we don't want to flood the timeline
+    previous_screenshot_bottom = previous_screenshot.crop(
+        (0, previous_screenshot.height - 20, previous_screenshot.width, previous_screenshot.height)
+    )
+    img_bottom = img.crop((0, img.height - 20, img.width, img.height))
+    # Compare the two screenshot bottoms
+    diff = utils.calc_pixel_difference(previous_screenshot_bottom, img_bottom)
     if diff < new_graph_threshold:
         print(f"Graph is the same as before. Difference: {diff}")
         sys.exit(0)
