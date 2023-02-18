@@ -4,8 +4,7 @@ import datetime
 import os
 import sys
 
-new_graph_threshold = 10
-
+new_graph_threshold = 1000
 screenshot_path = "/home/paethon/git/covid_abwasser_tirol/screenshots/"
 
 
@@ -24,14 +23,14 @@ def toot(img):
     img.save(os.path.join(screenshot_path, "previous_screenshot.png"))
     # Post the image to mastodon
     msg = """
-    Aktuelle Fiktive Ausscheider von SARS-CoV-2 und aktiv positive Personen in Tirol.
+    Aktuelle fiktive Ausscheider von SARS-CoV-2 und aktiv positive Personen in Tirol.
     Daten von https://www.tirol.gv.at/umwelt/wasserwirtschaft/abwasser-monitoring-tirol/
     #tirol #covid19 #abwasser #monitoring
     """
     utils.post_to_mastodon(
         message=msg,
         image=img,
-        description="Grafik welche den Zeitlichen Verlauf der fiktiven Ausscheider von SARS-CoV-2 und aktiven positiven Personen in Tirol zeigt.",
+        description="Grafik welche den zeitlichen Verlauf der fiktiven Ausscheider von SARS-CoV-2 und aktiven positiven Personen in Tirol zeigt.",
     )
 
 
