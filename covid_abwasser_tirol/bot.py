@@ -4,7 +4,7 @@ import datetime
 import os
 import sys
 
-new_graph_threshold = 1000
+new_graph_threshold = 5  # Number of pixels that have to be different to consider the graph new
 screenshot_path = "/home/paethon/git/covid_abwasser_tirol/screenshots/"
 
 
