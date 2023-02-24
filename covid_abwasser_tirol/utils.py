@@ -1,9 +1,12 @@
-from PIL import Image
-from io import BytesIO
-import subprocess
 import os
+import re
+import subprocess
+from io import BytesIO
+
+import easyocr
 import numpy as np
 from mastodon import Mastodon
+from PIL import Image
 
 
 class ScreenshotError(Exception):
@@ -28,6 +31,24 @@ def take_shot(url: str, browser: str, selectors: str, width: int):
     os.remove("tmp.png")
 
     return img
+
+
+def get_text_from_image(image):
+    """Get the text from the given image using easyocr."""
+    reader = easyocr.Reader(["de"])
+    result = reader.readtext(np.array(image))
+
+    return result[0][1]
+
+
+def extract_date_from_text(text):
+    """Extracts a date in the format DD. month year from the given text."""
+    regex = r"\d{1,2}\.\s\w+\s\d{4}"
+    matches = re.findall(regex, text)
+    if matches:
+        return matches[0]
+    else:
+        return None
 
 
 def calc_pixel_difference(img1: Image.Image, img2: Image.Image):
