@@ -25,7 +25,7 @@ def get_bottom(img):
     return img_bottom
 
 
-def get_date(img):
+def get_date(img_bottom):
     txt = utils.get_text_from_image(img_bottom)
     date = utils.extract_date_from_text(txt)
     return date
@@ -43,8 +43,6 @@ def load_dict(path):
 
 
 def toot(img):
-    # If the graph is new, save the screenshot as the new previous screenshot and post it to Mastodon
-    img.save(os.path.join(screenshot_path, "previous_screenshot.png"))
     # Post the image to mastodon
     msg = """
     Aktuelle fiktive Ausscheider von SARS-CoV-2 und aktiv positive Personen in Tirol.
@@ -71,6 +69,7 @@ if __name__ == "__main__":
     img = get_shot()
     img_bottom = get_bottom(img)
     date = get_date(img_bottom)
+    assert date is not None, "Could not extract date from image"
 
     # If no previous screenshot was taken, create the screenshot directory if necessary, take a shot, post is and exit
     if not os.path.exists(os.path.join(screenshot_path, "state_dict.json")):
@@ -80,10 +79,10 @@ if __name__ == "__main__":
         img.save(os.path.join(screenshot_path, f"{timestamp}.png"))
 
         state_dict = {"previous_date": date}
-        save_dict(state_dict, os.path.join(screenshot_path, "state_dict.json"))
 
         print("No previous screenshot found. Created one and directly posted it.")
         if not test_mode:
+            save_dict(state_dict, os.path.join(screenshot_path, "state_dict.json"))
             toot(img)
         sys.exit(0)
 
@@ -95,12 +94,11 @@ if __name__ == "__main__":
     # If the date has changed, save the new date, save the screenshot and post it
     if date != old_date:
         state_dict["previous_date"] = date
-        save_dict(state_dict, os.path.join(screenshot_path, "state_dict.json"))
-
-        img.save(os.path.join(screenshot_path, f"{timestamp}.png"))
 
         print("Date has changed. Posting new toot.")
         if not test_mode:
             toot(img)
+            save_dict(state_dict, os.path.join(screenshot_path, "state_dict.json"))
+            img.save(os.path.join(screenshot_path, f"{timestamp}.png"))
     else:
         print("Date has not changed. Toot not posted.")

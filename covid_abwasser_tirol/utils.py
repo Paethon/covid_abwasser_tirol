@@ -35,20 +35,23 @@ def take_shot(url: str, browser: str, selectors: str, width: int):
 
 def get_text_from_image(image):
     """Get the text from the given image using easyocr."""
-    reader = easyocr.Reader(["de"])
-    result = reader.readtext(np.array(image))
-
-    return result[0][1]
+    reader = easyocr.Reader(lang_list=["de"])
+    result = reader.readtext(image=np.array(image), low_text=0.1)
+    return ". ".join([r[1] for r in result])
 
 
 def extract_date_from_text(text):
-    """Extracts a date in the format DD. month year from the given text."""
-    regex = r"\d{1,2}\.\s\w+\s\d{4}"
-    matches = re.findall(regex, text)
-    if matches:
-        return matches[0]
-    else:
+    """Extracts the date from the given text."""
+    # Regex that matches one or two digits, an arbitrary amount of dots and spaces, an arbitraty amount of letters an arbitrary amount of spaces and four digits
+    regex = r"(\d{1,2})[\s\.]*?([a-zA-Z]+).*?(\d{4})"
+    # Match the regex
+    match = re.search(regex, text)
+    if match is None:
         return None
+    # Extract the day, month, year (capture group 1, 2, 3)
+    day, month, year = match.groups()
+    # Return the date as a string
+    return f"{day}. {month} {year}"
 
 
 def calc_pixel_difference(img1: Image.Image, img2: Image.Image):
